@@ -59,7 +59,7 @@ func (c *Client) Accounts(params *AccountQueryParams) ([]Account, error) {
 	res, err := c.client.Get("accounts", queryString)
 
 	if err != nil {
-		log.Fatal("GET /accounts/: ", err)
+		log.Println("GET /accounts/: ", err)
 		return nil, err
 	}
 
@@ -68,7 +68,7 @@ func (c *Client) Accounts(params *AccountQueryParams) ([]Account, error) {
 	err = json.Unmarshal([]byte(res), &accounts)
 
 	if err != nil {
-		log.Fatalln("JSON: ", res)
+		log.Println("JSON: ", res)
 		return nil, err
 	}
 
@@ -80,7 +80,7 @@ func (c *Client) GetAccount(accountID string) (*Account, error) {
 	res, err := c.client.Get(fmt.Sprintf("accounts/%s", accountID), "")
 
 	if err != nil {
-		log.Fatal(fmt.Sprintf("GET /accounts/%s: ", accountID), err)
+		log.Println(fmt.Sprintf("GET /accounts/%s: ", accountID), err)
 		return nil, err
 	}
 
@@ -89,7 +89,7 @@ func (c *Client) GetAccount(accountID string) (*Account, error) {
 	err = json.Unmarshal([]byte(res), &account)
 
 	if err != nil {
-		log.Fatalln("JSON: ", res)
+		log.Println("JSON: ", res)
 		return nil, err
 	}
 
@@ -101,7 +101,7 @@ func (c *Client) CreateAccount(account *Account) error {
 	jsonBytes, err := json.Marshal(account)
 
 	if err != nil {
-		log.Fatalln("CeateAccount: ", err)
+		log.Println("CeateAccount: ", err)
 		return err
 	}
 
@@ -110,7 +110,7 @@ func (c *Client) CreateAccount(account *Account) error {
 	id, err := c.client.Post("accounts", jsonStr)
 
 	if err != nil {
-		log.Fatal("POST /accounts/ ", err)
+		log.Println("POST /accounts/ ", err)
 		return err
 	}
 
@@ -124,7 +124,7 @@ func (c *Client) SearchAccount(accountName string) (*Account, error) {
 	accounts, err := c.Accounts(nil)
 
 	if err != nil {
-		log.Fatal("GET /accounts/: ", err)
+		log.Println("GET /accounts/: ", err)
 		return nil, err
 	}
 
@@ -142,7 +142,7 @@ func (c *Client) UpdateAccount(account *Account) error {
 	jsonBytes, err := json.Marshal(account)
 
 	if err != nil {
-		log.Fatalln("CeateAccount: ", err)
+		log.Println("CeateAccount: ", err)
 		return err
 	}
 
@@ -152,14 +152,14 @@ func (c *Client) UpdateAccount(account *Account) error {
 		fmt.Sprintf("accounts/%s", account.ID), jsonStr)
 
 	if err != nil {
-		log.Fatal("PUT /accounts/ ", err)
+		log.Println("PUT /accounts/ ", err)
 		return err
 	}
 
 	err = json.Unmarshal([]byte(accountResponse), account)
 
 	if err != nil {
-		log.Fatalln("Cannot decode Account JSON")
+		log.Println("Cannot decode Account JSON")
 		return err
 	}
 
@@ -171,7 +171,7 @@ func (c *Client) DeleteAccount(account *Account) error {
 	err := c.client.Delete(fmt.Sprintf("accounts/%s", account.ID))
 
 	if err != nil {
-		log.Fatal("DELETE /accounts/ ", err)
+		log.Print("DELETE /accounts/ ", err)
 		return err
 	}
 
@@ -184,7 +184,7 @@ func (c *Client) MoveAccount(account *Account, position int) error {
 	_, err := c.client.Post(fmt.Sprintf("accounts/%s", account.ID), jsonStr)
 
 	if err != nil {
-		log.Fatal("POST /accounts/ ", err)
+		log.Print("POST /accounts/ ", err)
 		return err
 	}
 
@@ -196,7 +196,7 @@ func (c *Client) ReorderAccounts(order *AccountsOrderParams) error {
 	jsonBytes, err := json.Marshal(order)
 
 	if err != nil {
-		log.Fatalln("ReorderAccounts: ", err)
+		log.Println("ReorderAccounts: ", err)
 		return err
 	}
 
@@ -205,7 +205,7 @@ func (c *Client) ReorderAccounts(order *AccountsOrderParams) error {
 	_, err = c.client.Post("accounts/reorder", jsonStr)
 
 	if err != nil {
-		log.Fatal("POST /accounts/reorder ", err)
+		log.Print("POST /accounts/reorder ", err)
 		return err
 	}
 
@@ -217,7 +217,7 @@ func (c *Client) MergeAccounts(order *AccountsMergeParams) error {
 	jsonBytes, err := json.Marshal(order)
 
 	if err != nil {
-		log.Fatalln("MergeAccounts: ", err)
+		log.Println("MergeAccounts: ", err)
 		return err
 	}
 
@@ -226,7 +226,7 @@ func (c *Client) MergeAccounts(order *AccountsMergeParams) error {
 	_, err = c.client.Post("accounts/merge", jsonStr)
 
 	if err != nil {
-		log.Fatal("POST /accounts/merge ", err)
+		log.Print("POST /accounts/merge ", err)
 		return err
 	}
 
@@ -244,7 +244,7 @@ func (c *Client) Budgets(params *BudgetQueryParams) ([]Budget, error) {
 	res, err := c.client.Get("budgets", queryString)
 
 	if err != nil {
-		log.Fatal("GET /budgets/: ", err)
+		log.Print("GET /budgets/: ", err)
 		return nil, err
 	}
 
@@ -253,7 +253,7 @@ func (c *Client) Budgets(params *BudgetQueryParams) ([]Budget, error) {
 	err = json.Unmarshal([]byte(res), &budgets)
 
 	if err != nil {
-		log.Fatalln("JSON: ", res)
+		log.Println("JSON: ", res)
 		return nil, err
 	}
 
@@ -265,7 +265,7 @@ func (c *Client) GetBudget(budgetID string) (*Budget, error) {
 	res, err := c.client.Get(fmt.Sprintf("budgets/%s", budgetID), "")
 
 	if err != nil {
-		log.Fatal(fmt.Sprintf("GET /budgets/%s: ", budgetID), err)
+		log.Print(fmt.Sprintf("GET /budgets/%s: ", budgetID), err)
 		return nil, err
 	}
 
@@ -274,7 +274,7 @@ func (c *Client) GetBudget(budgetID string) (*Budget, error) {
 	err = json.Unmarshal([]byte(res), &budget)
 
 	if err != nil {
-		log.Fatalln("JSON: ", res)
+		log.Println("JSON: ", res)
 		return nil, err
 	}
 
@@ -292,7 +292,7 @@ func (c *Client) Categories(params *CategoryQueryParams) ([]Category, error) {
 	res, err := c.client.Get("categories", queryString)
 
 	if err != nil {
-		log.Fatal("GET /categories/: ", err)
+		log.Print("GET /categories/: ", err)
 		return nil, err
 	}
 
@@ -301,7 +301,7 @@ func (c *Client) Categories(params *CategoryQueryParams) ([]Category, error) {
 	err = json.Unmarshal([]byte(res), &categories)
 
 	if err != nil {
-		log.Fatalln("JSON: ", res)
+		log.Println("JSON: ", res)
 		return nil, err
 	}
 
@@ -313,7 +313,7 @@ func (c *Client) GetCategory(categoryID string) (*Category, error) {
 	res, err := c.client.Get(fmt.Sprintf("categories/%s", categoryID), "")
 
 	if err != nil {
-		log.Fatal(fmt.Sprintf("GET /categories/%s: ", categoryID), err)
+		log.Print(fmt.Sprintf("GET /categories/%s: ", categoryID), err)
 		return nil, err
 	}
 
@@ -322,7 +322,7 @@ func (c *Client) GetCategory(categoryID string) (*Category, error) {
 	err = json.Unmarshal([]byte(res), &category)
 
 	if err != nil {
-		log.Fatalln("JSON: ", res)
+		log.Println("JSON: ", res)
 		return nil, err
 	}
 
@@ -334,7 +334,7 @@ func (c *Client) CreateCategory(category *Category) error {
 	jsonBytes, err := json.Marshal(category)
 
 	if err != nil {
-		log.Fatalln("CeateCategory: ", err)
+		log.Println("CeateCategory: ", err)
 		return err
 	}
 
@@ -343,7 +343,7 @@ func (c *Client) CreateCategory(category *Category) error {
 	id, err := c.client.Post("categories", jsonStr)
 
 	if err != nil {
-		log.Fatal("POST /categories/ ", err)
+		log.Print("POST /categories/ ", err)
 		return err
 	}
 
@@ -357,7 +357,7 @@ func (c *Client) UpdateCategory(category *Category) error {
 	jsonBytes, err := json.Marshal(category)
 
 	if err != nil {
-		log.Fatalln("UpdateCategory: ", err)
+		log.Println("UpdateCategory: ", err)
 		return err
 	}
 
@@ -367,14 +367,14 @@ func (c *Client) UpdateCategory(category *Category) error {
 		fmt.Sprintf("categories/%s", category.ID), jsonStr)
 
 	if err != nil {
-		log.Fatal("PUT /categories/ ", err)
+		log.Print("PUT /categories/ ", err)
 		return err
 	}
 
 	err = json.Unmarshal([]byte(categoryResponse), category)
 
 	if err != nil {
-		log.Fatalln("Cannot decode Category JSON")
+		log.Println("Cannot decode Category JSON")
 		return err
 	}
 
@@ -386,7 +386,7 @@ func (c *Client) DeleteCategory(category *Category) error {
 	err := c.client.Delete(fmt.Sprintf("categories/%s", category.ID))
 
 	if err != nil {
-		log.Fatal("DELETE /categories/ ", err)
+		log.Print("DELETE /categories/ ", err)
 		return err
 	}
 
@@ -398,7 +398,7 @@ func (c *Client) MergeCategories(order *CategoriesMergeParams) error {
 	jsonBytes, err := json.Marshal(order)
 
 	if err != nil {
-		log.Fatalln("MergeCategories: ", err)
+		log.Println("MergeCategories: ", err)
 		return err
 	}
 
@@ -407,7 +407,7 @@ func (c *Client) MergeCategories(order *CategoriesMergeParams) error {
 	_, err = c.client.Post("categories/merge", jsonStr)
 
 	if err != nil {
-		log.Fatal("POST /categories/merge ", err)
+		log.Print("POST /categories/merge ", err)
 		return err
 	}
 

@@ -46,7 +46,7 @@ func (c *RestHTTPClient) getIDFromLocationHeader(
 
 	id, err := c.parseIDFromLocationHeader(locationHeader)
 	if err != nil {
-		log.Fatal("Location URL parsing: ", err)
+		log.Print("Location URL parsing: ", err)
 		return "", err
 	}
 
@@ -58,7 +58,7 @@ func (c *RestHTTPClient) parseIDFromLocationHeader(
 
 	guid, err := url.Parse(locationURL)
 	if err != nil {
-		log.Fatal("Location URL parsing: ", err)
+		log.Print("Location URL parsing: ", err)
 		return "", err
 	}
 
@@ -69,7 +69,7 @@ func (c *RestHTTPClient) parseIDFromLocationHeader(
 		return id, nil
 	}
 
-	return "", errors.New("Cannot parse resource ID")
+	return "", errors.New("cannot parse resource ID")
 }
 
 // Get takes an API endpoint and return a JSON string
@@ -82,7 +82,7 @@ func (c *RestHTTPClient) Get(APIUrl, queryString string) (string, error) {
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		log.Fatal("NewRequest: ", err)
+		log.Print("NewRequest: ", err)
 		return "", err
 	}
 
@@ -94,7 +94,7 @@ func (c *RestHTTPClient) Get(APIUrl, queryString string) (string, error) {
 
 	resp, err := c.Client.Do(req)
 	if err != nil {
-		log.Fatal("Do: ", err)
+		log.Print("Do: ", err)
 		return "", err
 	}
 
@@ -102,7 +102,7 @@ func (c *RestHTTPClient) Get(APIUrl, queryString string) (string, error) {
 
 	bs, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal("ReadAll: ", err)
+		log.Print("ReadAll: ", err)
 		return "", err
 	}
 
@@ -116,7 +116,7 @@ func (c *RestHTTPClient) Post(APIUrl, JSONPayload string) (string, error) {
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
 	if err != nil {
-		log.Fatal("NewRequest: ", err)
+		log.Print("NewRequest: ", err)
 		return "", err
 	}
 
@@ -131,7 +131,7 @@ func (c *RestHTTPClient) Post(APIUrl, JSONPayload string) (string, error) {
 
 	resp, err := c.Client.Do(req)
 	if err != nil {
-		log.Fatal("Do: ", err)
+		log.Print("Do: ", err)
 		return "", err
 	}
 
@@ -140,7 +140,7 @@ func (c *RestHTTPClient) Post(APIUrl, JSONPayload string) (string, error) {
 	// Parse Location header to get ID
 	id, err := c.getIDFromLocationHeader(resp)
 	if err != nil {
-		log.Fatal("Do: ", err)
+		log.Print("Do: ", err)
 		return "", err
 	}
 
@@ -154,7 +154,7 @@ func (c *RestHTTPClient) Update(APIUrl, JSONPayload string) (string, error) {
 
 	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(jsonStr))
 	if err != nil {
-		log.Fatal("NewRequest: ", err)
+		log.Print("NewRequest: ", err)
 		return "", err
 	}
 
@@ -169,7 +169,7 @@ func (c *RestHTTPClient) Update(APIUrl, JSONPayload string) (string, error) {
 
 	resp, err := c.Client.Do(req)
 	if err != nil {
-		log.Fatal("Do: ", err)
+		log.Print("Do: ", err)
 		return "", err
 	}
 
@@ -177,7 +177,7 @@ func (c *RestHTTPClient) Update(APIUrl, JSONPayload string) (string, error) {
 
 	bs, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal("ReadAll: ", err)
+		log.Print("ReadAll: ", err)
 		return "", err
 	}
 
@@ -190,7 +190,7 @@ func (c *RestHTTPClient) Delete(APIUrl string) error {
 
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
-		log.Fatal("NewRequest: ", err)
+		log.Print("NewRequest: ", err)
 		return err
 	}
 
@@ -202,7 +202,7 @@ func (c *RestHTTPClient) Delete(APIUrl string) error {
 
 	_, err = c.Client.Do(req)
 	if err != nil {
-		log.Fatal("Do: ", err)
+		log.Print("Do: ", err)
 		return err
 	}
 

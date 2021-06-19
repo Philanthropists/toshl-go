@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	toshl "github.com/andreagrandi/toshl-go"
+	toshl "github.com/Philanthropists/toshl-go"
 	"github.com/stretchr/testify/assert"
 )
 
