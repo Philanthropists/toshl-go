@@ -1,11 +1,9 @@
 package toshl
 
 import (
-	"testing"
-
-	"time"
-
 	"github.com/stretchr/testify/assert"
+	"testing"
+	"time"
 )
 
 func TestAccountGetQueryString(t *testing.T) {
