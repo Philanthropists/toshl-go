@@ -12,8 +12,8 @@ import (
 
 // DefaultBaseURL is ...
 const (
-	DefaultBaseURL     = "https://api.toshl.com"
-	ToshlClientVersion = "0.1"
+	DefaultBaseURL = "https://api.toshl.com"
+	ClientVersion  = "0.1"
 )
 
 // Client handles API requests
@@ -45,7 +45,7 @@ func (c *Client) GetHTTPClient() HTTPClient {
 // GetUserAgentString returns the string for UserAgent
 func GetUserAgentString() string {
 	return fmt.Sprintf(
-		"toshl-go %s - %s", ToshlClientVersion, runtime.Version())
+		"toshl-go %s - %s", ClientVersion, runtime.Version())
 }
 
 // Accounts returns the list of Accounts
@@ -57,7 +57,6 @@ func (c *Client) Accounts(params *AccountQueryParams) ([]Account, error) {
 	}
 
 	res, err := c.client.Get("accounts", queryString)
-
 	if err != nil {
 		log.Println("GET /accounts/: ", err)
 		return nil, err
@@ -66,7 +65,6 @@ func (c *Client) Accounts(params *AccountQueryParams) ([]Account, error) {
 	var accounts []Account
 
 	err = json.Unmarshal([]byte(res), &accounts)
-
 	if err != nil {
 		log.Println("JSON: ", res)
 		return nil, err
@@ -78,7 +76,6 @@ func (c *Client) Accounts(params *AccountQueryParams) ([]Account, error) {
 // GetAccount returns the a specific Account
 func (c *Client) GetAccount(accountID string) (*Account, error) {
 	res, err := c.client.Get(fmt.Sprintf("accounts/%s", accountID), "")
-
 	if err != nil {
 		log.Println(fmt.Sprintf("GET /accounts/%s: ", accountID), err)
 		return nil, err
@@ -87,7 +84,6 @@ func (c *Client) GetAccount(accountID string) (*Account, error) {
 	var account *Account
 
 	err = json.Unmarshal([]byte(res), &account)
-
 	if err != nil {
 		log.Println("JSON: ", res)
 		return nil, err
@@ -101,7 +97,7 @@ func (c *Client) CreateAccount(account *Account) error {
 	jsonBytes, err := json.Marshal(account)
 
 	if err != nil {
-		log.Println("CeateAccount: ", err)
+		log.Println("CreateAccount: ", err)
 		return err
 	}
 
@@ -114,7 +110,7 @@ func (c *Client) CreateAccount(account *Account) error {
 		return err
 	}
 
-	account.ID = id
+	account.Id = id
 
 	return nil
 }
@@ -122,7 +118,6 @@ func (c *Client) CreateAccount(account *Account) error {
 // SearchAccount search for Account name and return an Account
 func (c *Client) SearchAccount(accountName string) (*Account, error) {
 	accounts, err := c.Accounts(nil)
-
 	if err != nil {
 		log.Println("GET /accounts/: ", err)
 		return nil, err
@@ -140,24 +135,21 @@ func (c *Client) SearchAccount(accountName string) (*Account, error) {
 // UpdateAccount updates a Toshl Account
 func (c *Client) UpdateAccount(account *Account) error {
 	jsonBytes, err := json.Marshal(account)
-
 	if err != nil {
-		log.Println("CeateAccount: ", err)
+		log.Println("CreateAccount: ", err)
 		return err
 	}
 
 	jsonStr := string(jsonBytes)
 
 	accountResponse, err := c.client.Update(
-		fmt.Sprintf("accounts/%s", account.ID), jsonStr)
-
+		fmt.Sprintf("accounts/%s", account.Id), jsonStr)
 	if err != nil {
 		log.Println("PUT /accounts/ ", err)
 		return err
 	}
 
 	err = json.Unmarshal([]byte(accountResponse), account)
-
 	if err != nil {
 		log.Println("Cannot decode Account JSON")
 		return err
@@ -168,8 +160,7 @@ func (c *Client) UpdateAccount(account *Account) error {
 
 // DeleteAccount deletes a Toshl Account
 func (c *Client) DeleteAccount(account *Account) error {
-	err := c.client.Delete(fmt.Sprintf("accounts/%s", account.ID))
-
+	err := c.client.Delete(fmt.Sprintf("accounts/%s", account.Id))
 	if err != nil {
 		log.Print("DELETE /accounts/ ", err)
 		return err
@@ -181,8 +172,8 @@ func (c *Client) DeleteAccount(account *Account) error {
 // MoveAccount move a Toshl Account to a different position
 func (c *Client) MoveAccount(account *Account, position int) error {
 	jsonStr := fmt.Sprintf(`{"position": %s}`, strconv.Itoa(position))
-	_, err := c.client.Post(fmt.Sprintf("accounts/%s", account.ID), jsonStr)
 
+	_, err := c.client.Post(fmt.Sprintf("accounts/%s", account.Id), jsonStr)
 	if err != nil {
 		log.Print("POST /accounts/ ", err)
 		return err
@@ -194,7 +185,6 @@ func (c *Client) MoveAccount(account *Account, position int) error {
 // ReorderAccounts change the order of Toshl accounts
 func (c *Client) ReorderAccounts(order *AccountsOrderParams) error {
 	jsonBytes, err := json.Marshal(order)
-
 	if err != nil {
 		log.Println("ReorderAccounts: ", err)
 		return err
@@ -203,7 +193,6 @@ func (c *Client) ReorderAccounts(order *AccountsOrderParams) error {
 	jsonStr := string(jsonBytes)
 
 	_, err = c.client.Post("accounts/reorder", jsonStr)
-
 	if err != nil {
 		log.Print("POST /accounts/reorder ", err)
 		return err
@@ -215,7 +204,6 @@ func (c *Client) ReorderAccounts(order *AccountsOrderParams) error {
 // MergeAccounts merges two ore more Toshl accounts into a single one
 func (c *Client) MergeAccounts(order *AccountsMergeParams) error {
 	jsonBytes, err := json.Marshal(order)
-
 	if err != nil {
 		log.Println("MergeAccounts: ", err)
 		return err
@@ -224,7 +212,6 @@ func (c *Client) MergeAccounts(order *AccountsMergeParams) error {
 	jsonStr := string(jsonBytes)
 
 	_, err = c.client.Post("accounts/merge", jsonStr)
-
 	if err != nil {
 		log.Print("POST /accounts/merge ", err)
 		return err
@@ -242,7 +229,6 @@ func (c *Client) Budgets(params *BudgetQueryParams) ([]Budget, error) {
 	}
 
 	res, err := c.client.Get("budgets", queryString)
-
 	if err != nil {
 		log.Print("GET /budgets/: ", err)
 		return nil, err
@@ -251,7 +237,6 @@ func (c *Client) Budgets(params *BudgetQueryParams) ([]Budget, error) {
 	var budgets []Budget
 
 	err = json.Unmarshal([]byte(res), &budgets)
-
 	if err != nil {
 		log.Println("JSON: ", res)
 		return nil, err
@@ -263,7 +248,6 @@ func (c *Client) Budgets(params *BudgetQueryParams) ([]Budget, error) {
 // GetBudget returns the a specific Budget
 func (c *Client) GetBudget(budgetID string) (*Budget, error) {
 	res, err := c.client.Get(fmt.Sprintf("budgets/%s", budgetID), "")
-
 	if err != nil {
 		log.Print(fmt.Sprintf("GET /budgets/%s: ", budgetID), err)
 		return nil, err
@@ -272,7 +256,6 @@ func (c *Client) GetBudget(budgetID string) (*Budget, error) {
 	var budget *Budget
 
 	err = json.Unmarshal([]byte(res), &budget)
-
 	if err != nil {
 		log.Println("JSON: ", res)
 		return nil, err
@@ -290,7 +273,6 @@ func (c *Client) Categories(params *CategoryQueryParams) ([]Category, error) {
 	}
 
 	res, err := c.client.Get("categories", queryString)
-
 	if err != nil {
 		log.Print("GET /categories/: ", err)
 		return nil, err
@@ -299,7 +281,6 @@ func (c *Client) Categories(params *CategoryQueryParams) ([]Category, error) {
 	var categories []Category
 
 	err = json.Unmarshal([]byte(res), &categories)
-
 	if err != nil {
 		log.Println("JSON: ", res)
 		return nil, err
@@ -311,7 +292,6 @@ func (c *Client) Categories(params *CategoryQueryParams) ([]Category, error) {
 // GetCategory returns the a specific Category
 func (c *Client) GetCategory(categoryID string) (*Category, error) {
 	res, err := c.client.Get(fmt.Sprintf("categories/%s", categoryID), "")
-
 	if err != nil {
 		log.Print(fmt.Sprintf("GET /categories/%s: ", categoryID), err)
 		return nil, err
@@ -320,7 +300,6 @@ func (c *Client) GetCategory(categoryID string) (*Category, error) {
 	var category *Category
 
 	err = json.Unmarshal([]byte(res), &category)
-
 	if err != nil {
 		log.Println("JSON: ", res)
 		return nil, err
@@ -332,7 +311,6 @@ func (c *Client) GetCategory(categoryID string) (*Category, error) {
 // CreateCategory creates a Toshl Category
 func (c *Client) CreateCategory(category *Category) error {
 	jsonBytes, err := json.Marshal(category)
-
 	if err != nil {
 		log.Println("CeateCategory: ", err)
 		return err
@@ -341,7 +319,6 @@ func (c *Client) CreateCategory(category *Category) error {
 	jsonStr := string(jsonBytes)
 
 	id, err := c.client.Post("categories", jsonStr)
-
 	if err != nil {
 		log.Print("POST /categories/ ", err)
 		return err
@@ -355,7 +332,6 @@ func (c *Client) CreateCategory(category *Category) error {
 // UpdateCategory updates a Toshl Category
 func (c *Client) UpdateCategory(category *Category) error {
 	jsonBytes, err := json.Marshal(category)
-
 	if err != nil {
 		log.Println("UpdateCategory: ", err)
 		return err
@@ -412,4 +388,32 @@ func (c *Client) MergeCategories(order *CategoriesMergeParams) error {
 	}
 
 	return nil
+}
+
+func (c *Client) Entries(params *EntryQueryParams) ([]Entry, error) {
+	queryString := ""
+	var err error
+
+	if params != nil {
+		queryString, err = params.getQueryString()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	res, err := c.client.Get("entries", queryString)
+	if err != nil {
+		log.Println("GET /entries/: ", err)
+		return nil, err
+	}
+
+	var entries []Entry
+
+	err = json.Unmarshal([]byte(res), &entries)
+	if err != nil {
+		log.Println("JSON: ", res)
+		return nil, err
+	}
+
+	return entries, nil
 }

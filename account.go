@@ -8,7 +8,7 @@ import (
 
 // Account represents a Toshl account
 type Account struct {
-	ID             string   `json:"id"`
+	Id             string   `json:"id"`
 	Name           string   `json:"name"`
 	Balance        float64  `json:"balance"`
 	InitialBalance float64  `json:"initial_balance"`

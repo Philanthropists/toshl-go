@@ -69,7 +69,7 @@ func (c *RestHTTPClient) parseIDFromLocationHeader(
 		return id, nil
 	}
 
-	return "", errors.New("cannot parse resource ID")
+	return "", errors.New("cannot parse resource Id")
 }
 
 // Get takes an API endpoint and return a JSON string
@@ -97,8 +97,9 @@ func (c *RestHTTPClient) Get(APIUrl, queryString string) (string, error) {
 		log.Print("Do: ", err)
 		return "", err
 	}
-
 	defer resp.Body.Close()
+
+	log.Printf("%+v", resp.Header.Get("Link"))
 
 	bs, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -109,7 +110,7 @@ func (c *RestHTTPClient) Get(APIUrl, queryString string) (string, error) {
 	return string(bs), nil
 }
 
-// Post takes an API endpoint and a JSON payload and return string ID
+// Post takes an API endpoint and a JSON payload and return string Id
 func (c *RestHTTPClient) Post(APIUrl, JSONPayload string) (string, error) {
 	url := c.BaseURL + "/" + APIUrl
 	var jsonStr = []byte(JSONPayload)
@@ -137,7 +138,7 @@ func (c *RestHTTPClient) Post(APIUrl, JSONPayload string) (string, error) {
 
 	defer resp.Body.Close()
 
-	// Parse Location header to get ID
+	// Parse Location header to get Id
 	id, err := c.getIDFromLocationHeader(resp)
 	if err != nil {
 		log.Print("Do: ", err)
@@ -184,7 +185,7 @@ func (c *RestHTTPClient) Update(APIUrl, JSONPayload string) (string, error) {
 	return string(bs), nil
 }
 
-// Delete removes the Account having the ID specified in the endpoint
+// Delete removes the Account having the Id specified in the endpoint
 func (c *RestHTTPClient) Delete(APIUrl string) error {
 	url := c.BaseURL + "/" + APIUrl
 

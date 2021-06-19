@@ -2,9 +2,9 @@ package toshl_test
 
 import (
 	"encoding/json"
+	"github.com/Philanthropists/toshl-go"
 	"testing"
 
-	toshl "github.com/Philanthropists/toshl-go"
 	"github.com/stretchr/testify/assert"
 )
 
