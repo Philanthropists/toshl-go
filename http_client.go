@@ -8,13 +8,15 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 	"time"
 )
 
 // HTTPClient is an interface to define the client to access API resources
 type HTTPClient interface {
-	Get(APIUrl, queryString string) (string, error)
+	Get(APIUrl, queryString string) (string, string, error)
+	GetMultiple(APIUrl, queryString string) ([]string, error)
 	Post(APIUrl, JSONPayload string) (string, error)
 	Update(APIUrl, JSONPayload string) (string, error)
 	Delete(APIUrl string) error
@@ -73,7 +75,7 @@ func (c *RestHTTPClient) parseIDFromLocationHeader(
 }
 
 // Get takes an API endpoint and return a JSON string
-func (c *RestHTTPClient) Get(APIUrl, queryString string) (string, error) {
+func (c *RestHTTPClient) Get(APIUrl, queryString string) (string, string, error) {
 	url := c.BaseURL + "/" + APIUrl
 
 	if queryString != "" {
@@ -83,7 +85,7 @@ func (c *RestHTTPClient) Get(APIUrl, queryString string) (string, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Print("NewRequest: ", err)
-		return "", err
+		return "", "", err
 	}
 
 	// Set authorization token
@@ -95,19 +97,58 @@ func (c *RestHTTPClient) Get(APIUrl, queryString string) (string, error) {
 	resp, err := c.Client.Do(req)
 	if err != nil {
 		log.Print("Do: ", err)
-		return "", err
+		return "", "", err
 	}
 	defer resp.Body.Close()
 
-	log.Printf("%+v", resp.Header.Get("Link"))
+	link := resp.Header.Get("Link")
 
 	bs, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Print("ReadAll: ", err)
-		return "", err
+		return "", "", err
 	}
 
-	return string(bs), nil
+	return string(bs), link, nil
+}
+
+func extractQueryLink(match []byte) []byte {
+	re := regexp.MustCompile(`\?[^<>]+`)
+	return re.Find(match)
+}
+
+func getNextLink(links string) string {
+	re := regexp.MustCompile(`<([^<>]*)>; rel="next"`)
+	match := re.Find([]byte(links))
+	if match == nil {
+		return ""
+	}
+
+	match = extractQueryLink(match)
+
+	return strings.Trim(string(match), "?")
+}
+
+func (c *RestHTTPClient) GetMultiple(APIUrl, queryString string) ([]string, error) {
+	response, links, err := c.Get(APIUrl, queryString)
+	if err != nil {
+		return nil, err
+	}
+
+	link := getNextLink(links)
+	responses := []string{response}
+
+	for link != "" {
+		response, nextLinks, err := c.Get(APIUrl, link)
+		if err != nil {
+			return nil, err
+		}
+
+		responses = append(responses, response)
+		link = getNextLink(nextLinks)
+	}
+
+	return responses, nil
 }
 
 // Post takes an API endpoint and a JSON payload and return string Id

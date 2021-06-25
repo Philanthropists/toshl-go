@@ -12,8 +12,12 @@ type MockedHTTPClient struct {
 	Error      error
 }
 
-func (mc *MockedHTTPClient) Get(APIUrl, queryString string) (string, error) {
-	return mc.JSONString, mc.Error
+func (mc *MockedHTTPClient) Get(APIUrl, queryString string) (string, string, error) {
+	return mc.JSONString, "", mc.Error
+}
+
+func (mc *MockedHTTPClient) GetMultiple(APIUrl, queryString string) ([]string, error) {
+	return []string{mc.JSONString}, mc.Error
 }
 
 func (mc *MockedHTTPClient) Post(APIUrl, JSONPayload string) (string, error) {
