@@ -15,7 +15,7 @@ import (
 
 // HTTPClient is an interface to define the client to access API resources
 type HTTPClient interface {
-	Get(APIUrl, queryString string) (string, string, error)
+	Get(APIUrl, queryString string) (string, error)
 	GetMultiple(APIUrl, queryString string) ([]string, error)
 	Post(APIUrl, JSONPayload string) (string, error)
 	Update(APIUrl, JSONPayload string) (string, error)
@@ -71,11 +71,10 @@ func (c *RestHTTPClient) parseIDFromLocationHeader(
 		return id, nil
 	}
 
-	return "", errors.New("cannot parse resource Id")
+	return "", errors.New("cannot parse resource ID")
 }
 
-// Get takes an API endpoint and return a JSON string
-func (c *RestHTTPClient) Get(APIUrl, queryString string) (string, string, error) {
+func (c *RestHTTPClient) getRequest(APIUrl, queryString string) (string, string, error) {
 	url := c.BaseURL + "/" + APIUrl
 
 	if queryString != "" {
@@ -112,12 +111,18 @@ func (c *RestHTTPClient) Get(APIUrl, queryString string) (string, string, error)
 	return string(bs), link, nil
 }
 
+// Get takes an API endpoint and return a JSON string
+func (c *RestHTTPClient) Get(APIUrl, queryString string) (string, error) {
+	resp, _, err := c.getRequest(APIUrl, queryString)
+	return resp, err
+}
+
 func extractQueryLink(match []byte) []byte {
 	re := regexp.MustCompile(`\?[^<>]+`)
 	return re.Find(match)
 }
 
-func getNextLink(links string) string {
+func extractNextLink(links string) string {
 	re := regexp.MustCompile(`<([^<>]*)>; rel="next"`)
 	match := re.Find([]byte(links))
 	if match == nil {
@@ -130,28 +135,28 @@ func getNextLink(links string) string {
 }
 
 func (c *RestHTTPClient) GetMultiple(APIUrl, queryString string) ([]string, error) {
-	response, links, err := c.Get(APIUrl, queryString)
+	response, links, err := c.getRequest(APIUrl, queryString)
 	if err != nil {
 		return nil, err
 	}
 
-	link := getNextLink(links)
+	link := extractNextLink(links)
 	responses := []string{response}
 
 	for link != "" {
-		response, nextLinks, err := c.Get(APIUrl, link)
+		response, nextLinks, err := c.getRequest(APIUrl, link)
 		if err != nil {
 			return nil, err
 		}
 
 		responses = append(responses, response)
-		link = getNextLink(nextLinks)
+		link = extractNextLink(nextLinks)
 	}
 
 	return responses, nil
 }
 
-// Post takes an API endpoint and a JSON payload and return string Id
+// Post takes an API endpoint and a JSON payload and return string ID
 func (c *RestHTTPClient) Post(APIUrl, JSONPayload string) (string, error) {
 	url := c.BaseURL + "/" + APIUrl
 	var jsonStr = []byte(JSONPayload)
@@ -179,7 +184,7 @@ func (c *RestHTTPClient) Post(APIUrl, JSONPayload string) (string, error) {
 
 	defer resp.Body.Close()
 
-	// Parse Location header to get Id
+	// Parse Location header to get ID
 	id, err := c.getIDFromLocationHeader(resp)
 	if err != nil {
 		log.Print("Do: ", err)
@@ -226,7 +231,7 @@ func (c *RestHTTPClient) Update(APIUrl, JSONPayload string) (string, error) {
 	return string(bs), nil
 }
 
-// Delete removes the Account having the Id specified in the endpoint
+// Delete removes the Account having the ID specified in the endpoint
 func (c *RestHTTPClient) Delete(APIUrl string) error {
 	url := c.BaseURL + "/" + APIUrl
 

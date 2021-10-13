@@ -56,7 +56,7 @@ func (c *Client) Accounts(params *AccountQueryParams) ([]Account, error) {
 		queryString = params.getQueryString()
 	}
 
-	res, _, err := c.client.Get("accounts", queryString)
+	res, err := c.client.Get("accounts", queryString)
 	if err != nil {
 		log.Println("GET /accounts/: ", err)
 		return nil, err
@@ -75,7 +75,7 @@ func (c *Client) Accounts(params *AccountQueryParams) ([]Account, error) {
 
 // GetAccount returns the a specific Account
 func (c *Client) GetAccount(accountID string) (*Account, error) {
-	res, _, err := c.client.Get(fmt.Sprintf("accounts/%s", accountID), "")
+	res, err := c.client.Get(fmt.Sprintf("accounts/%s", accountID), "")
 	if err != nil {
 		log.Println(fmt.Sprintf("GET /accounts/%s: ", accountID), err)
 		return nil, err
@@ -110,7 +110,7 @@ func (c *Client) CreateAccount(account *Account) error {
 		return err
 	}
 
-	account.Id = id
+	account.ID = id
 
 	return nil
 }
@@ -143,7 +143,7 @@ func (c *Client) UpdateAccount(account *Account) error {
 	jsonStr := string(jsonBytes)
 
 	accountResponse, err := c.client.Update(
-		fmt.Sprintf("accounts/%s", account.Id), jsonStr)
+		fmt.Sprintf("accounts/%s", account.ID), jsonStr)
 	if err != nil {
 		log.Println("PUT /accounts/ ", err)
 		return err
@@ -160,7 +160,7 @@ func (c *Client) UpdateAccount(account *Account) error {
 
 // DeleteAccount deletes a Toshl Account
 func (c *Client) DeleteAccount(account *Account) error {
-	err := c.client.Delete(fmt.Sprintf("accounts/%s", account.Id))
+	err := c.client.Delete(fmt.Sprintf("accounts/%s", account.ID))
 	if err != nil {
 		log.Print("DELETE /accounts/ ", err)
 		return err
@@ -173,7 +173,7 @@ func (c *Client) DeleteAccount(account *Account) error {
 func (c *Client) MoveAccount(account *Account, position int) error {
 	jsonStr := fmt.Sprintf(`{"position": %s}`, strconv.Itoa(position))
 
-	_, err := c.client.Post(fmt.Sprintf("accounts/%s", account.Id), jsonStr)
+	_, err := c.client.Post(fmt.Sprintf("accounts/%s", account.ID), jsonStr)
 	if err != nil {
 		log.Print("POST /accounts/ ", err)
 		return err
@@ -228,7 +228,7 @@ func (c *Client) Budgets(params *BudgetQueryParams) ([]Budget, error) {
 		queryString = params.getQueryString()
 	}
 
-	res, _, err := c.client.Get("budgets", queryString)
+	res, err := c.client.Get("budgets", queryString)
 	if err != nil {
 		log.Print("GET /budgets/: ", err)
 		return nil, err
@@ -247,7 +247,7 @@ func (c *Client) Budgets(params *BudgetQueryParams) ([]Budget, error) {
 
 // GetBudget returns the a specific Budget
 func (c *Client) GetBudget(budgetID string) (*Budget, error) {
-	res, _, err := c.client.Get(fmt.Sprintf("budgets/%s", budgetID), "")
+	res, err := c.client.Get(fmt.Sprintf("budgets/%s", budgetID), "")
 	if err != nil {
 		log.Print(fmt.Sprintf("GET /budgets/%s: ", budgetID), err)
 		return nil, err
@@ -272,7 +272,7 @@ func (c *Client) Categories(params *CategoryQueryParams) ([]Category, error) {
 		queryString = params.getQueryString()
 	}
 
-	res, _, err := c.client.Get("categories", queryString)
+	res, err := c.client.Get("categories", queryString)
 	if err != nil {
 		log.Print("GET /categories/: ", err)
 		return nil, err
@@ -291,7 +291,7 @@ func (c *Client) Categories(params *CategoryQueryParams) ([]Category, error) {
 
 // GetCategory returns the a specific Category
 func (c *Client) GetCategory(categoryID string) (*Category, error) {
-	res, _, err := c.client.Get(fmt.Sprintf("categories/%s", categoryID), "")
+	res, err := c.client.Get(fmt.Sprintf("categories/%s", categoryID), "")
 	if err != nil {
 		log.Print(fmt.Sprintf("GET /categories/%s: ", categoryID), err)
 		return nil, err

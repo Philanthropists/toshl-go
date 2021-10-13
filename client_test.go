@@ -12,8 +12,8 @@ type MockedHTTPClient struct {
 	Error      error
 }
 
-func (mc *MockedHTTPClient) Get(APIUrl, queryString string) (string, string, error) {
-	return mc.JSONString, "", mc.Error
+func (mc *MockedHTTPClient) Get(APIUrl, queryString string) (string, error) {
+	return mc.JSONString, mc.Error
 }
 
 func (mc *MockedHTTPClient) GetMultiple(APIUrl, queryString string) ([]string, error) {
@@ -159,7 +159,7 @@ func TestClientGetAccount(t *testing.T) {
 
 	c := toshl.NewClient("abcd1234", mc)
 	account, _ := c.GetAccount("42")
-	assert.Equal(t, account.Id, "42")
+	assert.Equal(t, account.ID, "42")
 }
 
 func TestClientCreateAccount(t *testing.T) {
@@ -175,7 +175,7 @@ func TestClientCreateAccount(t *testing.T) {
 
 	c := toshl.NewClient("abcd1234", mc)
 	c.CreateAccount(account)
-	assert.Equal(t, account.Id, "42")
+	assert.Equal(t, account.ID, "42")
 }
 
 func TestClientSearchAccount(t *testing.T) {
@@ -229,7 +229,7 @@ func TestClientSearchAccount(t *testing.T) {
 
 	c := toshl.NewClient("abcd1234", mc)
 	account, _ := c.SearchAccount("Tesla model A")
-	assert.Equal(t, account.Id, "38")
+	assert.Equal(t, account.ID, "38")
 }
 
 func TestClientUpdateAccount(t *testing.T) {
@@ -266,7 +266,7 @@ func TestClientDeleteAccount(t *testing.T) {
 	mc := &MockedHTTPClient{}
 
 	account := &toshl.Account{
-		Id:   "50",
+		ID:   "50",
 		Name: "Test",
 		Currency: toshl.Currency{
 			Code: "GBP",
@@ -282,7 +282,7 @@ func TestClientMoveAccount(t *testing.T) {
 	mc := &MockedHTTPClient{}
 
 	account := &toshl.Account{
-		Id:   "50",
+		ID:   "50",
 		Name: "Test",
 		Currency: toshl.Currency{
 			Code: "GBP",
