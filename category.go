@@ -10,7 +10,7 @@ import (
 type Category struct {
 	ID       string         `json:"id"`
 	Name     string         `json:"name"`
-	Modified time.Time      `json:"modified"`
+	Modified time.Time      `json:"-"` // omitted
 	Type     string         `json:"type"`
 	Deleted  bool           `json:"deleted"`
 	Counts   CategoryCounts `json:"counts"`
