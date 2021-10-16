@@ -421,3 +421,25 @@ func (c *Client) Entries(params *EntryQueryParams) ([]Entry, error) {
 
 	return entries, nil
 }
+
+func (c *Client) CreateEntry(entry *Entry) error {
+	jsonBytes, err := json.Marshal(entry)
+
+	if err != nil {
+		log.Println("CreateEntry: ", err)
+		return err
+	}
+
+	jsonStr := string(jsonBytes)
+
+	id, err := c.client.Post("entries", jsonStr)
+
+	if err != nil {
+		log.Println("POST /entries/ ", err)
+		return err
+	}
+
+	entry.Id = id
+
+	return nil
+}
