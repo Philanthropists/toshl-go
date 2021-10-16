@@ -39,7 +39,7 @@ func (c *CategoryQueryParams) getQueryString() string {
 	}
 
 	if !c.Since.IsZero() {
-		v.Set("since", c.Since.Format("2006-01-02T15:04:05Z"))
+		v.Set("since", c.Since.Format("2006-01-02 15:04:05.000"))
 	}
 
 	if c.Type != "" {
