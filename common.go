@@ -45,7 +45,7 @@ type Date time.Time
 
 func (v Date) MarshalJSON() ([]byte, error) {
 	asTime := time.Time(v)
-	return []byte(asTime.Format(DateFormat)), nil
+	return []byte("\"" + asTime.Format(DateFormat) + "\""), nil
 }
 
 func (v *Date) UnmarshalJSON(b []byte) error {
