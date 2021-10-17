@@ -7,9 +7,9 @@ import (
 
 // Currency represents a Toshl supported currency
 type Currency struct {
-	Code  string  `json:"code"`
-	Rate  float64 `json:"rate"`
-	Fixed bool    `json:"fixed"`
+	Code  string   `json:"code"`
+	Rate  *float64 `json:"rate,omitempty"`
+	Fixed *bool    `json:"fixed,omitempty"`
 }
 
 // Median represents a Toshl median
