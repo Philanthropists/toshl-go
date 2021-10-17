@@ -439,7 +439,7 @@ func (c *Client) CreateEntry(entry *Entry) error {
 		return err
 	}
 
-	entry.Id = id
+	entry.Id = &id
 
 	return nil
 }

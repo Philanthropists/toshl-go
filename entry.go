@@ -7,18 +7,18 @@ import (
 )
 
 type Entry struct {
-	Id          string    `json:"id"`
+	Id          *string   `json:"id,omitempty"`
 	Amount      float64   `json:"amount"`
 	Currency    Currency  `json:"currency"`
 	Date        string    `json:"date"`
-	Description string    `json:"desc"`
+	Description *string   `json:"desc,omitempty"`
 	Account     string    `json:"account"`
 	Category    string    `json:"category"`
-	Tags        []string  `json:"tags"`
-	Location    Location  `json:"location,omitempty"`
+	Tags        []string  `json:"tags,omitempty"`
+	Location    *Location `json:"location,omitempty"`
 	Created     time.Time `json:"created"`
 	Modified    string    `json:"modified"`
-	Repeat      Repeat    `json:"repeat,omitempty"`
+	Repeat      *Repeat   `json:"repeat,omitempty"`
 }
 
 type EntryQueryParams struct {
