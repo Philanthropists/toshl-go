@@ -17,7 +17,7 @@ type Entry struct {
 	Tags        []string  `json:"tags,omitempty"`
 	Location    *Location `json:"location,omitempty"`
 	Created     time.Time `json:"created"`
-	Modified    string    `json:"modified"`
+	Modified    *string   `json:"modified,omitempty"`
 	Repeat      *Repeat   `json:"repeat,omitempty"`
 }
 
