@@ -95,7 +95,6 @@ func (c *Client) GetAccount(accountID string) (*Account, error) {
 // CreateAccount creates a Toshl Account
 func (c *Client) CreateAccount(account *Account) error {
 	jsonBytes, err := json.Marshal(account)
-
 	if err != nil {
 		log.Println("CreateAccount: ", err)
 		return err
@@ -104,13 +103,12 @@ func (c *Client) CreateAccount(account *Account) error {
 	jsonStr := string(jsonBytes)
 
 	id, err := c.client.Post("accounts", jsonStr)
-
 	if err != nil {
 		log.Println("POST /accounts/ ", err)
 		return err
 	}
 
-	account.ID = id
+	account.ID = &id
 
 	return nil
 }
@@ -341,14 +339,12 @@ func (c *Client) UpdateCategory(category *Category) error {
 
 	categoryResponse, err := c.client.Update(
 		fmt.Sprintf("categories/%s", category.ID), jsonStr)
-
 	if err != nil {
 		log.Print("PUT /categories/ ", err)
 		return err
 	}
 
 	err = json.Unmarshal([]byte(categoryResponse), category)
-
 	if err != nil {
 		log.Println("Cannot decode Category JSON")
 		return err
@@ -360,7 +356,6 @@ func (c *Client) UpdateCategory(category *Category) error {
 // DeleteCategory deletes a Toshl Category
 func (c *Client) DeleteCategory(category *Category) error {
 	err := c.client.Delete(fmt.Sprintf("categories/%s", category.ID))
-
 	if err != nil {
 		log.Print("DELETE /categories/ ", err)
 		return err
@@ -372,7 +367,6 @@ func (c *Client) DeleteCategory(category *Category) error {
 // MergeCategories merges two ore more Toshl categories into a single one
 func (c *Client) MergeCategories(order *CategoriesMergeParams) error {
 	jsonBytes, err := json.Marshal(order)
-
 	if err != nil {
 		log.Println("MergeCategories: ", err)
 		return err
@@ -381,7 +375,6 @@ func (c *Client) MergeCategories(order *CategoriesMergeParams) error {
 	jsonStr := string(jsonBytes)
 
 	_, err = c.client.Post("categories/merge", jsonStr)
-
 	if err != nil {
 		log.Print("POST /categories/merge ", err)
 		return err
@@ -424,7 +417,6 @@ func (c *Client) Entries(params *EntryQueryParams) ([]Entry, error) {
 
 func (c *Client) CreateEntry(entry *Entry) error {
 	jsonBytes, err := json.Marshal(entry)
-
 	if err != nil {
 		log.Println("CreateEntry: ", err)
 		return err
@@ -433,7 +425,6 @@ func (c *Client) CreateEntry(entry *Entry) error {
 	jsonStr := string(jsonBytes)
 
 	id, err := c.client.Post("entries", jsonStr)
-
 	if err != nil {
 		log.Println("POST /entries/ ", err)
 		return err
