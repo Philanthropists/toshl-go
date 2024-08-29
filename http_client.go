@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -42,8 +42,8 @@ func (c *RestHTTPClient) setUserAgentHeader(req *http.Request) {
 }
 
 func (c *RestHTTPClient) getIDFromLocationHeader(
-	response *http.Response) (string, error) {
-
+	response *http.Response,
+) (string, error) {
 	locationHeader := response.Header.Get("Location")
 
 	id, err := c.parseIDFromLocationHeader(locationHeader)
@@ -56,8 +56,8 @@ func (c *RestHTTPClient) getIDFromLocationHeader(
 }
 
 func (c *RestHTTPClient) parseIDFromLocationHeader(
-	locationURL string) (string, error) {
-
+	locationURL string,
+) (string, error) {
 	guid, err := url.Parse(locationURL)
 	if err != nil {
 		log.Print("Location URL parsing: ", err)
@@ -102,7 +102,7 @@ func (c *RestHTTPClient) getRequest(APIUrl, queryString string) (string, string,
 
 	link := resp.Header.Get("Link")
 
-	bs, err := ioutil.ReadAll(resp.Body)
+	bs, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Print("ReadAll: ", err)
 		return "", "", err
@@ -159,7 +159,7 @@ func (c *RestHTTPClient) GetMultiple(APIUrl, queryString string) ([]string, erro
 // Post takes an API endpoint and a JSON payload and return string ID
 func (c *RestHTTPClient) Post(APIUrl, JSONPayload string) (string, error) {
 	url := c.BaseURL + "/" + APIUrl
-	var jsonStr = []byte(JSONPayload)
+	jsonStr := []byte(JSONPayload)
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
 	if err != nil {
@@ -184,6 +184,11 @@ func (c *RestHTTPClient) Post(APIUrl, JSONPayload string) (string, error) {
 
 	defer resp.Body.Close()
 
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		log.Printf("Status code is not 2XX: %s\n", resp.Status)
+		return "", errors.New("status code is not 2XX")
+	}
+
 	// Parse Location header to get ID
 	id, err := c.getIDFromLocationHeader(resp)
 	if err != nil {
@@ -197,7 +202,7 @@ func (c *RestHTTPClient) Post(APIUrl, JSONPayload string) (string, error) {
 // Update takes an API endpoint and a JSON payload and update the resource
 func (c *RestHTTPClient) Update(APIUrl, JSONPayload string) (string, error) {
 	url := c.BaseURL + "/" + APIUrl
-	var jsonStr = []byte(JSONPayload)
+	jsonStr := []byte(JSONPayload)
 
 	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(jsonStr))
 	if err != nil {
@@ -222,7 +227,7 @@ func (c *RestHTTPClient) Update(APIUrl, JSONPayload string) (string, error) {
 
 	defer resp.Body.Close()
 
-	bs, err := ioutil.ReadAll(resp.Body)
+	bs, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Print("ReadAll: ", err)
 		return "", err
