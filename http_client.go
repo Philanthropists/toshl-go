@@ -185,7 +185,16 @@ func (c *RestHTTPClient) Post(APIUrl, JSONPayload string) (string, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		log.Printf("Status code is not 2XX: %s\n", resp.Status)
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			body = []byte("could not read body")
+		}
+		content := string(body)
+		log.Printf(
+			"Status code is not 2XX: %s - %s\n",
+			resp.Status,
+			content,
+		)
 		return "", errors.New("status code is not 2XX")
 	}
 
