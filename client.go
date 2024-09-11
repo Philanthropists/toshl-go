@@ -92,12 +92,17 @@ func (c *Client) GetAccount(accountID string) (*Account, error) {
 	return account, nil
 }
 
+type CreateAccountParams struct {
+	Name     string   `json:"name"`
+	Currency Currency `json:"currency"`
+}
+
 // CreateAccount creates a Toshl Account
-func (c *Client) CreateAccount(account *Account) error {
+func (c *Client) CreateAccount(account CreateAccountParams) (string, error) {
 	jsonBytes, err := json.Marshal(account)
 	if err != nil {
 		log.Println("CreateAccount: ", err)
-		return err
+		return "", err
 	}
 
 	jsonStr := string(jsonBytes)
@@ -105,12 +110,10 @@ func (c *Client) CreateAccount(account *Account) error {
 	id, err := c.client.Post("accounts", jsonStr)
 	if err != nil {
 		log.Println("POST /accounts/ ", err)
-		return err
+		return "", err
 	}
 
-	account.ID = &id
-
-	return nil
+	return id, nil
 }
 
 // SearchAccount search for Account name and return an Account
